@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Character Set and Viewport -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Site Verification (keep if needed) -->
+  <meta name="google-site-verification" content="ZuK2pvozDS96vm0_IRjSYEsTqSdC8FJCIgJdAitGf0U" />
+
+  <!-- Title and SEO -->
+ <title>AutoConnect – List and Find Vehicles in Kenya</title>
+
+<meta name="description" content="AutoConnect helps vehicle owners and sellers in Kenya list cars, motorbikes, buses, and trucks on a live interactive map. Buyers can search and get voice-guided directions." />
+<meta name="keywords" content="car listing Kenya, buy used cars Kenya, list vehicles online Kenya, AutoConnect, vehicle map Kenya" />
+ 
+  <meta name="author" content="RealPlot Connect by Webs Star" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph / Social Preview -->
+ <meta property="og:title" content="AutoConnect – Vehicle Listing Portal" />
+<meta property="og:description" content="Vehicle owners and sellers in Kenya can now list cars, trucks, and motorcycles live on AutoConnect. Viewers get real-time map access and voice directions." />
+
+  <meta property="og:url" content="https://webs-star.github.io/realestate.com/landlords" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://your-site-preview-image-link.jpg" /> <!-- Replace with actual image -->
+
+  <!-- Firebase (for listings and auth) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+
+  <!-- Cloudinary (media upload) + Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <!-- Leaflet Maps + Routing -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" />
+
+
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    form input, form select, form textarea, form button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    form button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    form button:hover {
+      background-color: #0056b3;
+    }
+    #previewContainer img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin: 5px;
+      border: 1px solid #ccc;
+    }
+    #loading {
+      text-align: center;
+      font-weight: bold;
+      color: #ff6600;
+      margin-top: 10px;
+      display: none;
+    }
+  
+#listings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Center the cards */
+  gap: 20px;
+  margin: 40px auto 60px auto;
+  padding: 0 30px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.listing-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.image-column {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.image-column img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.listing-card h4,
+.listing-card p {
+  margin: 2px 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+ul.description {
+  background: #f0f0f0;
+  border-radius: 5px;
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 6px 10px;
+  margin: 6px 0;
+  color: #000;
+
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.listing-card button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.edit-btn {
+  background: #28a745;
+  color: white;
+  margin-right: 6px;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+
+
+
+
+
+
+
+#realplot-note {
+  background-color: #f0f8ff;
+  border-left: 6px solid #007acc;
+  padding: 20px 25px;
+  margin: 30px auto;
+  max-width: 800px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+#realplot-note h2 {
+  font-size: 22px;
+  color: #005999;
+  margin-bottom: 15px;
+}
+#realplot-note ul {
+  padding-left: 20px;
+}
+#realplot-note li {
+  margin-bottom: 10px;
+  line-height: 1.5em;
+}
+
+
+    
+
+
+
+ #authSection {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+    font-family: Arial, sans-serif;
+  }
+
+  #authSection input {
+    padding: 12px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  #authSection button {
+    padding: 12px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  #authSection button:hover {
+    background-color: #45a049;
+  }
+
+    
+    }
+
+    
+  </style>
+</head>
+
+<body>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDLTAd2u0IlhA4Gm4-0tTSzLUDHFYj045g",
+  authDomain: "realestate-afbe6.firebaseapp.com",
+  databaseURL: "https://realestate-afbe6-default-rtdb.firebaseio.com",
+  projectId: "realestate-afbe6",
+  storageBucket: "realestate-afbe6.appspot.com",
+  messagingSenderId: "202970291965",
+  appId: "1:202970291965:web:baaf253d6c9a8685c5e894"
+};
+firebase.initializeApp(firebaseConfig);
+
+
+
+
+const db = firebase.database();
+
+
+
+
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    // Show upload section
+    document.getElementById("uploadSection").style.display = "block";
+    document.getElementById("authSection").style.display = "none";
+    userId = user.uid;
+
+    // Optional: Scroll to upload section
+    document.getElementById("uploadSection").scrollIntoView({ behavior: "smooth" });
+
+  } else {
+    // Show login section
+    document.getElementById("uploadSection").style.display = "none";
+    document.getElementById("authSection").style.display = "block";
+    userId = null;
+  }
+});
+
+  
+
+  
+
+
+  // 🔒 Make functions global
+  
+window.googleLogin = () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider)
+    .then(result => {
+      alert("Logged in as " + result.user.email);
+      // Show the upload section without waiting for onAuthStateChanged
+      
+    })
+    .catch(err => {
+      alert("Login failed: " + err.message);
+    });
+};
+
+ 
+
+  window.login = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(userCredential => {
+      alert("Logged in as: " + userCredential.user.email);
+      // Show the upload section manually without reloading
+      
+    })
+    .catch(error => {
+      alert("Login error: " + error.message);
+    });
+};
+
+  
+
+  window.register = () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then(userCredential => {
+        alert("User registered: " + userCredential.user.email);
+      })
+      .catch(error => {
+        alert("Error: " + error.message);
+      });
+  };
+
+  window.logout = () => {
+    firebase.auth().signOut().then(() => {
+      alert("Logged out");
+    });
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</script>
+
+
+
+
+
+<div id="authSection">
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+  <button onclick="register()">Register</button>
+  <button onclick="logout()">Logout</button>
+  <button onclick="googleLogin()">Login with Google</button>
+</div>
+
+
+<div id="realplot-note">
+<h2>📌 AutoConnect Vehicle Listing Guidelines</h2>
+<ul>
+  <li>📍 List vehicle only when physically near it to capture accurate GPS location.</li>
+  <li>🧽 Clean the vehicle and take clear photos before listing.</li>
+  <li>🧭 Confirm your vehicle is correctly placed on the map and edit if needed.</li>
+  <li>💰 Enter the full price: e.g., <code>950000</code> not <code>950K</code>.</li>
+  <li>🖼️ Upload 4 clear photos showing exterior and interior.</li>
+  <li>✍️ In description, mention condition, mileage, year, and any issues.</li>
+  <li>🤝 If you are an agent, write your agent title at the bottom of the description (e.g., <em>by AutoConnect Agents</em>).</li>
+
+</ul>
+</div>
+
+
+
+<h2>📤 Upload Vehicle Listing</h2>
+
+
+<div id="uploadSection" style="display: none;">
+  <form id="uploadForm">
+  
+
+    <!-- Vehicle Type Dropdown -->
+<select id="type" required>
+  <option value="">Select Vehicle Type</option>
+  <option value="car">Car</option>
+  <option value="matatu">Matatu</option>
+  <option value="pickup">Pickup</option>
+  <option value="truck">Truck</option>
+  <option value="bus">Bus</option>
+  <option value="motorcycle">Motorcycle</option>
+  <option value="van">Van</option>
+  <option value="minivan">Mini Van</option>
+  <option value="trailer">Trailer</option>
+  <option value="tuk tuk">Tuk Tuk</option>
+ <option value="scooter">Scooter</option>
+ 
+</select>
+
+
+
+  <!-- Listing Purpose Dropdown -->
+    <select id="purpose" required>
+      <option value="">Select Listing Purpose</option>
+      <option value="sale">For Sale</option>
+      <option value="rent">For Rent</option>
+      <option value="lease">For Lease</option>
+     
+    </select>
+
+    
+    <!-- Other Inputs -->
+    <input type="text" id="location" placeholder="Location (County, Town)" required />
+    <input type="number" id="price" placeholder="Price (KES)" required />
+  <input
+  type="tel"
+  id="contact"
+  placeholder="contact -this format +254712345678"
+  pattern="^\+254\d{9}$"
+  title="Enter a valid Kenyan phone number starting with +254 and followed by 9 digits"
+  required
+/>
+
+
+    <textarea id="description" placeholder="Description (optional)"></textarea>
+
+    <input type="file" id="images" accept="image/*" multiple />
+    <div style="font-size: 0.9em; color: #777;">only 4 image, so choose the best</div>
+    <div id="previewContainer"></div>
+
+    <div id="loading">⏳ Uploading...</div>
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+
+
+  
+
+
+<h2>🚗 All Vehicle Listings</h2>
+
+<div id="listings"></div>
+
+<script>
+const cloudName = "dwvt4e9o2";
+const uploadPreset = "unsigned_upload";
+
+const form = document.getElementById("uploadForm");
+const imageInput = document.getElementById("images");
+const previewContainer = document.getElementById("previewContainer");
+const listingsDiv = document.getElementById("listings");
+const loading = document.getElementById("loading");
+
+let currentUserLatLng = null;
+let userId = localStorage.getItem("autoconnect_user_id");
+if (!userId) {
+  userId = "user_" + Date.now();
+  localStorage.setItem("autoconnect_user_id", userId);
+}
+
+// Get GPS
+navigator.geolocation.getCurrentPosition(pos => {
+  currentUserLatLng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+});
+
+// Image preview
+imageInput.addEventListener("change", () => {
+  const files = [...imageInput.files];
+  previewContainer.innerHTML = "";
+  if (files.length > 4) {
+    alert("⚠️ You can upload up to 4 images.");
+    imageInput.value = "";
+    return;
+  }
+  files.forEach(file => {
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    previewContainer.appendChild(img);
+  });
+});
+
+// Upload handler
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!currentUserLatLng) return alert("⚠️ Location not available.");
+  const files = [...imageInput.files];
+  if (files.length > 4) {
+    alert("You can only upload up to 4 images.");
+    return;
+  }
+
+  loading.style.display = "block";
+  const imageURLs = [];
+
+  const rawContact = document.getElementById("contact").value.trim();
+  const validContactPattern = /^\+254\d{9}$/;
+  if (!validContactPattern.test(rawContact)) {
+    alert("❌ Enter a valid Kenyan number starting with +254 followed by 9 digits.");
+    loading.style.display = "none";
+    return;
+  }
+
+  if (files.length > 0) {
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
+      const res = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData);
+      imageURLs.push(res.data.secure_url);
+    }
+  }
+
+  const data = {
+    type: document.getElementById("type").value,
+    purpose: document.getElementById("purpose").value,
+    location: document.getElementById("location").value,
+    price: parseInt(document.getElementById("price").value),
+    contact: rawContact,
+    description: document.getElementById("description").value,
+    images: imageURLs,
+    lat: currentUserLatLng.lat,
+    lng: currentUserLatLng.lng,
+    userId,
+    timestamp: Date.now()
+  };
+
+  await db.ref("vehicles").push(data);
+
+  form.reset();
+  previewContainer.innerHTML = "";
+  loading.style.display = "none";
+  alert("✅ Vehicle listing uploaded!");
+});
+
+// Fetch and display listings
+db.ref("vehicles").on("value", (snap) => {
+  const listings = snap.val() || {};
+  listingsDiv.innerHTML = "";
+
+  const sortedListings = Object.entries(listings)
+    .sort((a, b) => b[1].timestamp - a[1].timestamp); // newest first
+
+  for (const [id, item] of sortedListings) {
+    const div = document.createElement("div");
+    div.className = "listing-card";
+
+    // Image carousel
+    const imageColumn = document.createElement("div");
+    imageColumn.className = "image-column";
+    if (item.images && item.images.length > 0) {
+      const img = document.createElement("img");
+      img.src = item.images[0];
+      img.style.height = "150px";
+      img.style.width = "100%";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "8px";
+      img.style.transition = "opacity 0.5s ease-in-out";
+      imageColumn.appendChild(img);
+
+      let index = 0;
+      setInterval(() => {
+        index = (index + 1) % item.images.length;
+        img.style.opacity = 0;
+        setTimeout(() => {
+          img.src = item.images[index];
+          img.style.opacity = 1;
+        }, 500);
+      }, 5000);
+    }
+    div.appendChild(imageColumn);
+
+    // Info
+    const info = document.createElement("div");
+    info.innerHTML = `
+      <h4><b>${item.type}</b> – <b>KES ${item.price}</b></h4>
+      <p><strong>Purpose:</strong> ${item.purpose || "N/A"}</p>
+      <p><strong>Location:</strong> ${item.location}</p>
+      <p><strong>Contact:</strong> ${item.contact}</p>
+      <ul class="description">
+        ${(item.description || "").split("\n").map(line => `<li>${line}</li>`).join("")}
+      </ul>
+    `;
+    div.appendChild(info);
+
+    // Owner controls
+    if (item.userId === userId) {
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️ Edit";
+      editBtn.className = "edit-btn";
+      editBtn.onclick = () => {
+        const newType = prompt("Edit type:", item.type);
+        const newPrice = prompt("Edit price:", item.price);
+        const newLocation = prompt("Edit location:", item.location);
+        let newContact = prompt("Edit contact:", item.contact)?.trim();
+
+        if (!newContact) return;
+        if (/^0\d{9}$/.test(newContact)) {
+          newContact = "+254" + newContact.slice(1);
+        }
+        if (!/^\+254\d{9}$/.test(newContact)) {
+          alert("❌ Invalid contact. Use format: +254712345678");
+          return;
+        }
+
+        const newDescription = prompt("Edit description:", item.description || "");
+        const newPurpose = prompt("Edit purpose:", item.purpose || "");
+
+        if (newType && newPrice && newLocation && newContact) {
+          db.ref("vehicles/" + id).update({
+            type: newType,
+            price: parseInt(newPrice),
+            location: newLocation,
+            contact: newContact,
+            description: newDescription,
+            purpose: newPurpose
+          }).then(() => {
+            alert("✅ Listing updated.");
+          }).catch(err => {
+            alert("❌ Error updating: " + err.message);
+          });
+        }
+      };
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑️ Delete";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => {
+        if (confirm("Delete this listing?")) {
+          db.ref("vehicles/" + id).remove();
+        }
+      };
+
+      div.appendChild(editBtn);
+      div.appendChild(delBtn);
+    }
+
+    listingsDiv.appendChild(div);
+  }
+});
+</script>
+</body>
+</html>
