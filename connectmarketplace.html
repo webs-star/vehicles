@@ -86,6 +86,21 @@
       width: 55px;
       height: 55px;
     }
+
+    html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+}
+
   </style>
 </head>
 <body>
@@ -94,7 +109,7 @@
     <h1>Connect Marketplace</h1>
     <p>Kenya’s Hub for Property, Cars, Education & Tech Services</p>
   </header>
-
+ <main>
   <section class="section">
     <div class="grid">
       <!-- Real Estate -->
@@ -117,11 +132,14 @@
 </div>
 
 <div class="card">
-  <h2>WisdomApps</h2>
+  <h2>Wisdom Apps & Webs</h2>
   <p>Custom app and website development service. Ideal for businesses, schools, startups, or individuals who want professional systems, platforms, or automation solutions.</p>
   <a href="https://webs-star.github.io/WisdomAppsWebs/" target="_blank">Visit Site</a>
 </div>
- 
+       </section>
+ </main>
+
+      
   <footer>
     &copy; <span id="year"></span> Connect Marketplace. All rights reserved.
   </footer>
