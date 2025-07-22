@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Vehicle Marketplace – AutoConnect</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="google-site-verification" content="ZuK2pvozDS96vm0_IRjSYEsTqSdC8FJCIgJdAitGf0U" />
+<meta name="description" content="Explore AutoConnect to find cars, motorcycles, pickups, and more across Kenya. Apply filters and get voice-guided directions instantly." />
+<meta name="keywords" content="vehicle listings Kenya, AutoConnect, car marketplace, motorcycles for sale, trucks, hire vehicles, vehicle map, voice navigation" />
+<meta name="author" content="AutoConnect by Webs Star" />
+<meta name="robots" content="index, follow" />
+<meta property="og:title" content="AutoConnect – Vehicle Finder Platform" />
+<meta property="og:description" content="Browse cars, motorcycles, and other vehicles near you on AutoConnect. Use live maps, filters, and voice-guided directions." />
+<meta property="og:url" content="https://webs-star.github.io/autoconnect.com/customers.html" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://your-site-preview-image.jpg" />
+<link rel="icon" href="favicon.ico" />
+
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+
+
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+    h2 {
+      text-align: center;
+      background: #0056b3;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .card, .filters {
+      background: white; padding: 20px; border-radius: 8px;
+      box-shadow: 0 2px 6px #ccc; max-width: 800px; margin: 20px auto;
+    }
+    input, select, button {
+      width: 100%; margin-top: 10px; padding: 10px;
+    }
+    img.property {
+      width: 100%; margin-bottom: 10px; border-radius: 10px;
+    }
+   
+   
+  #listings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.listing-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.image-column {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.image-column img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.listing-card h4,
+.listing-card p {
+  margin: 2px 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+ul.description {
+  background: #f0f0f0;
+  border-radius: 5px;
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 6px 10px;
+  margin: 6px 0;
+  color: #000;
+
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.listing-card button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.edit-btn {
+  background: #28a745;
+  color: white;
+  margin-right: 6px;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+ 
+    .bold-info {
+    font-weight: bold;
+    font-size: 1.2em;
+  }
+
+  .type    { color: #007BFF; }  /* Blue */
+  .purpose { color: #28A745; }  /* Green */
+  .location { color: #6F42C1; } /* Purple */
+  .price   { color: #DC3545; }  /* Red */
+  .contact { color: #FFC107; } /* Yellow/Orange */
+  </style>
+</head>
+<body>
+
+<div class="filters">
+  <h3>🔍 Filter Listings</h3>
+  <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+  
+    <select id="filterType">
+  <option value="">All Types</option>
+    <option value="saloon">Saloon</option>
+  <option value="matatu">Matatu</option>
+  <option value="pickup">Pickup</option>
+  <option value="truck">Truck</option>
+  <option value="bus">Bus</option>
+  <option value="motorcycle">Motorcycle</option>
+  <option value="van">Van</option>
+  <option value="minivan">Mini Van</option>
+  <option value="trailer">Trailer</option>
+  <option value="tuk tuk">Tuk Tuk</option>
+ <option value="scooter">Scooter</option>
+</select>
+
+    
+<select id="filterPurpose">
+  <option value="">All Purposes</option>
+  <option value="sale">For Sale</option>
+  <option value="rent">For Rent</option>
+  <option value="lease">For Lease</option>
+  
+</select>
+
+    
+    
+    <select id="filterLocation">
+      <option value="">All Counties</option>
+      <option value="Mombasa">Mombasa</option><option value="Kwale">Kwale</option><option value="Kilifi">Kilifi</option><option value="Tana River">Tana River</option><option value="Lamu">Lamu</option><option value="Taita-Taveta">Taita-Taveta</option><option value="Garissa">Garissa</option><option value="Wajir">Wajir</option><option value="Mandera">Mandera</option><option value="Marsabit">Marsabit</option><option value="Isiolo">Isiolo</option><option value="Meru">Meru</option><option value="Tharaka-Nithi">Tharaka-Nithi</option><option value="Embu">Embu</option><option value="Kitui">Kitui</option><option value="Machakos">Machakos</option><option value="Makueni">Makueni</option><option value="Nyandarua">Nyandarua</option><option value="Nyeri">Nyeri</option><option value="Kirinyaga">Kirinyaga</option><option value="Murang'a">Murang'a</option><option value="Kiambu">Kiambu</option><option value="Turkana">Turkana</option><option value="West Pokot">West Pokot</option><option value="Samburu">Samburu</option><option value="Trans Nzoia">Trans Nzoia</option><option value="Uasin Gishu">Uasin Gishu</option><option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option><option value="Nandi">Nandi</option><option value="Baringo">Baringo</option><option value="Laikipia">Laikipia</option><option value="Nakuru">Nakuru</option><option value="Narok">Narok</option><option value="Kajiado">Kajiado</option><option value="Kericho">Kericho</option><option value="Bomet">Bomet</option><option value="Kakamega">Kakamega</option><option value="Vihiga">Vihiga</option><option value="Bungoma">Bungoma</option><option value="Busia">Busia</option><option value="Siaya">Siaya</option><option value="Kisumu">Kisumu</option><option value="Homa Bay">Homa Bay</option><option value="Migori">Migori</option><option value="Kisii">Kisii</option><option value="Nyamira">Nyamira</option><option value="Nairobi">Nairobi</option>
+    </select>
+    <input type="number" id="minPrice" placeholder="Min KES" />
+    <input type="number" id="maxPrice" placeholder="Max KES" />
+    <button onclick="loadListings()">Apply Filters</button>
+  </div>
+</div>
+
+<h2>🚗 AutoConnect – View Available Vehicles</h2>
+
+<div id="listings"></div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDLTAd2u0IlhA4Gm4-0tTSzLUDHFYj045g",
+    authDomain: "realestate-afbe6.firebaseapp.com",
+    databaseURL: "https://realestate-afbe6-default-rtdb.firebaseio.com",
+    projectId: "realestate-afbe6",
+    storageBucket: "realestate-afbe6.appspot.com",
+    messagingSenderId: "202970291965",
+    appId: "1:202970291965:web:baaf253d6c9a8685c5e894"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  let currentUserLatLng = null;
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      currentUserLatLng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+    },
+    () => alert("Location access denied.")
+  );
+
+ function loadListings() {
+  const filterType = document.getElementById("filterType").value;
+  const filterLocation = document.getElementById("filterLocation").value;
+  const minPrice = parseInt(document.getElementById("minPrice").value) || 0;
+  const maxPrice = parseInt(document.getElementById("maxPrice").value) || Infinity;
+   const filterPurpose = document.getElementById("filterPurpose").value.toLowerCase().trim();
+
+  db.ref("vehicles").once("value", snapshot => {
+    const data = snapshot.val();
+    const listingsDiv = document.getElementById("listings");
+    listingsDiv.innerHTML = "";
+
+    if (!data) {
+      listingsDiv.innerHTML = "<p>No listings found.</p>";
+      return;
+    }
+
+    const sortedEntries = Object.entries(data).sort((a, b) => {
+      const tA = a[1].timestamp || 0;
+      const tB = b[1].timestamp || 0;
+      return tB - tA; // newest first
+    });
+ for (const [id, item] of sortedEntries) {
+ const itemType = (item.type || "").toLowerCase().trim();
+const itemLocation = (item.location || "").toLowerCase().trim();
+const itemPurpose = (item.purpose || "").toLowerCase().trim(); // ✅ only once
+
+const filterTypeVal = filterType.toLowerCase().trim();
+
+const filterLoc = filterLocation.toLowerCase().trim();
+
+const itemLocationWords = itemLocation.split(/[\s,-]+/);
+const filterWords = filterLoc.split(/[\s,-]+/);
+
+const locationMatch = filterLoc === "" || filterWords.some(word =>
+  itemLocationWords.includes(word)
+);
+const typeMatch = filterType === "" || itemType.includes(filterTypeVal);
+const purposeMatch = filterPurpose === "" || itemPurpose === filterPurpose;
+
+const priceMatch = item.price >= minPrice && item.price <= maxPrice;
+
+if (!typeMatch || !purposeMatch || !locationMatch || !priceMatch) continue;
+
+
+  // Continue with rendering the card...
+
+
+
+const card = document.createElement("div");
+card.className = "listing-card";
+card.innerHTML = `
+  <p><strong>Type:</strong> <span class="bold-info type">${item.type}</span></p>
+  <p><strong>Purpose:</strong> <span class="bold-info purpose">${item.purpose || "N/A"}</span></p>
+  <p><strong>Location:</strong> <span class="bold-info location">${item.location}</span></p>
+  <p><strong>Price:</strong> <span class="bold-info price">KES ${item.price}</span></p>
+
+  <ul class="description">
+    ${(item.description || "").split("\n").map(line => `<li>${line}</li>`).join("")}
+  </ul>
+
+  <p><strong>Contact:</strong> <span class="bold-info contact">${item.contact}</span></p>
+`;
+
+     
+const imageArray = Array.isArray(item.images) ? item.images : [];
+if (imageArray.length > 0) {
+  const img = document.createElement("img");
+  img.src = imageArray[0];
+  img.className = "property";
+  img.style.transition = "opacity 0.5s ease-in-out";
+  card.appendChild(img);
+
+  let index = 0;
+  setInterval(() => {
+    index = (index + 1) % imageArray.length;
+    img.style.opacity = 0;
+    setTimeout(() => {
+      img.src = imageArray[index];
+      img.style.opacity = 1;
+   }, 500);
+  }, 5000); // 5 seconds
+}
+
+
+
+     const mapId = "map-" + id;
+// Show Directions button
+const btn = document.createElement("button");
+btn.textContent = "📍 Show Directions";
+btn.style.background = "#4CAF50";
+btn.style.color = "white";
+btn.style.marginTop = "5px";
+btn.style.borderRadius = "5px";
+btn.style.padding = "8px 12px";
+btn.style.cursor = "pointer";
+btn.onclick = () => showMapForListing(item.lat, item.lng, mapId);
+
+// Chat button
+const chatBtn = document.createElement("button");
+chatBtn.textContent = "💬 Chat with Vehicle owner/dealer";
+chatBtn.style.background = "#ff9800";
+chatBtn.style.color = "white";
+chatBtn.style.marginTop = "5px";
+chatBtn.style.borderRadius = "5px";
+chatBtn.onclick = () => openChat(item.contact, item.location, item.type, id);
+// Map container
+const mapDiv = document.createElement("div");
+mapDiv.id = mapId;
+
+// Append to card
+card.appendChild(btn);
+card.appendChild(chatBtn); // ✅ new chat button
+card.appendChild(mapDiv);
+listingsDiv.appendChild(card);
+
+    }
+  });
+}
+
+
+
+  function showMapForListing(destLat, destLng, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  const mapDiv = document.createElement("div");
+  mapDiv.style.height = "300px";
+  mapDiv.style.marginTop = "10px";
+  mapDiv.style.borderRadius = "10px";
+  container.appendChild(mapDiv);
+
+  const directionsList = document.createElement("div");
+  directionsList.className = "directions-text";
+  directionsList.style.marginTop = "10px";
+  directionsList.style.padding = "10px";
+  directionsList.style.background = "#f9f9f9";
+  directionsList.style.borderRadius = "8px";
+  directionsList.innerHTML = "<strong>Directions:</strong><br><em>Loading...</em>";
+  container.appendChild(directionsList);
+
+  const map = L.map(mapDiv).setView([destLat, destLng], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  const destinationLatLng = L.latLng(destLat, destLng);
+  L.marker(destinationLatLng).addTo(map).bindPopup("Listing Location");
+
+  let userMarker = null;
+  let routeControl = null;
+
+  function updateRoute(userLatLng) {
+    if (userMarker) {
+      userMarker.setLatLng(userLatLng);
+    } else {
+      userMarker = L.marker(userLatLng, {
+        icon: L.icon({
+          iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+          iconSize: [25, 25],
+          iconAnchor: [12, 12]
+        })
+      }).addTo(map).bindPopup("You are here");
+    }
+
+    if (routeControl) {
+      map.removeControl(routeControl);
+    }
+
+    routeControl = L.Routing.control({
+      waypoints: [userLatLng, destinationLatLng],
+      routeWhileDragging: false,
+      addWaypoints: false,
+      createMarker: () => null,
+      show: false,
+      lineOptions: {
+        styles: [{ color: 'blue', weight: 4, opacity: 0.8 }]
+      }
+    }).addTo(map);
+
+    routeControl.on('routesfound', function (e) {
+      const route = e.routes[0];
+      const distanceKm = (route.summary.totalDistance / 1000).toFixed(2);
+      const timeMin = (route.summary.totalTime / 60).toFixed(0);
+
+      let steps = `<strong>Live Step-by-Step Directions:</strong><br>`;
+      const instructions = route.instructions || [];
+
+      // Leaflet sometimes leaves instructions empty, fix it manually
+      const formatter = new L.Routing.Formatter();
+      if (instructions.length === 0 && route.instructions === undefined) {
+        const legs = route.instructions = formatter._getInstructions.call({options:{}}, route);
+      }
+
+      for (const step of instructions) {
+        if (step.text) {
+          steps += `➡️ ${step.text} (${(step.distance / 1000).toFixed(2)} km)<br>`;
+        }
+      }
+
+      steps += `<br><em>Total Distance:</em> ${distanceKm} km<br>`;
+      steps += `<em>Estimated Time:</em> ${timeMin} mins`;
+
+      directionsList.innerHTML = steps;
+    });
+  }
+
+  // Watch live location and update route
+  navigator.geolocation.watchPosition(
+    pos => {
+      const userLatLng = L.latLng(pos.coords.latitude, pos.coords.longitude);
+      updateRoute(userLatLng);
+    },
+    err => {
+      alert("Location tracking failed: " + err.message);
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 3000,
+      timeout: 7000
+    }
+  );
+}
+window.onload = () => {
+  loadListings();
+};
+
+
+function openChat(contact, location, type, listingId) {
+  const message = prompt(`💬 Start chatting with the vehicle owner/dealer of this ${type} in ${location}.\n\nType your message below:`);
+
+  if (!message) return;
+
+  const phoneNumber = contact.replace(/\D/g, '');
+
+  const linkToListing = `https://webs-star.github.io/realestate.com/customers.html?listing=${listingId}`;
+
+  const preFilled = `Hello, I'm interested in the ${type} located in ${location}. I saw your listing on *AutoConnect*.\n\n${message}\n\n🔗 View listing: ${linkToListing}`;
+  const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(preFilled)}`;
+
+  window.open(whatsappURL, "_blank");
+}
+
+
+
+  
+</script>
+
+</body>
+</html>
