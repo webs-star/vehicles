@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Character Set and Viewport -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Site Verification -->
+  <meta name="google-site-verification" content="ZuK2pvozDS96vm0_IRjSYEsTqSdC8FJCIgJdAitGf0U" />
+
+  <!-- Title and SEO -->
+ <title>AutoConnect1 – List & Find Vehicles Across Kenya</title>
+
+  <meta name="description" content="AutoConnect1 lets dealers and individuals list and discover vehicles across Kenya using a live map with voice-guided directions." />
+
+ <meta name="keywords" content="cars for sale Kenya, buy vehicles Kenya, used cars Kenya, second-hand vehicles, car dealers Kenya, vehicle marketplace, sell my car Kenya, car listings Kenya, cheap cars Kenya, AutoConnect cars" />
+
+
+  <meta name="author" content="AutoConnect1 by Webs Star" />
+
+  <meta name="robots" content="index, follow" />
+
+  <!-- Open Graph (Social Media Preview) -->
+ <meta property="og:title" content="AutoConnect1 – Vehicle Listings with Live Map Navigation" />
+<meta property="og:description" content="Find or list vehicles across Kenya. Use the live map to discover nearby options with voice directions." />
+
+  <meta property="og:url" content="https://webs-star.github.io/realestate.com/realplot" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://res.cloudinary.com/dwvt4e9o2/image/upload/v1753194920/pexels-freestockpro-1031698_1_vpxwhp.jpg" /> <!-- Replace with real image if available -->
+
+  <!-- Favicon (Optional) -->
+  <link rel="icon" href="favicon.ico" />
+</head>
+
+
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+
+  header {
+  background: url('https://res.cloudinary.com/dwvt4e9o2/image/upload/v1753194920/pexels-freestockpro-1031698_1_vpxwhp.jpg') no-repeat center center/cover;
+  color: white;
+  padding: 100px 20px;
+  text-align: center;
+  position: relative;
+  clip-path: ellipse(80% 60% at 50% 40%); /* Reduced width: 80% */
+  width: 80%;         /* Reduce overall width */
+  margin: 0 auto;     /* Center the header */
+  border-radius: 20px; /* Optional: rounded corners */
+}
+
+
+    .site-logo {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .top-links {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .top-links a {
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .top-links a:hover {
+      background: #4CAF50;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      color: #4CAF50;
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+
+    ul, ol {
+      line-height: 1.7;
+      padding-left: 20px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 40px 0;
+    }
+
+    .cta-buttons a {
+      background: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 16px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .cta-buttons a:hover {
+      background: #388E3C;
+    }
+
+    .whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #25D366;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 30px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      z-index: 1000;
+      text-decoration: none;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .testimonial-card {
+      background: #fff;
+      border-left: 5px solid #4CAF50;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    .testimonial-card p {
+      font-style: italic;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .testimonial-card h4 {
+      color: #777;
+      font-size: 0.95rem;
+      font-weight: normal;
+    }
+
+    footer {
+      background: #000;
+      color: #ccc;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .top-links {
+        position: static;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      .site-logo {
+        position: static;
+        display: block;
+        margin: 0 auto 10px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 18px;
+      }
+
+      .cta-buttons a {
+        font-size: 14px;
+        padding: 10px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="top-links">
+    <a href="https://webs-star.github.io/realestate.com/" target="_blank">🏠 Sell/lease your vehicle</a>
+    <a href="https://webs-star.github.io/realestate.com/customers.html" target="_blank">👀 Buy or rent a vehicle </a>
+    <a href="#" onclick="alert('Donate to 0769255782'); return false;">❤️ Donate</a>
+  </div>
+<h1>AutoConnect1</h1>
+<p>Smart Vehicle Listing and Navigation Platform – Kenya</p>
+
+
+</header>
+
+<main>
+
+ <section>
+  <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+    <img src="https://res.cloudinary.com/dwvt4e9o2/image/upload/v1753196080/ChatGPT_Image_Jul_22_2025_05_53_54_PM_dkp7pa.png"
+         alt="  AutoConnect1 Logo"
+         style="width: 80px; height: auto; border-radius: 12px; object-fit: contain;" />
+    <h2 style="margin: 0;">🚗 What is AutoConnect?</h2>
+
+  </div>
+</section>
+
+   <p>AutoConnect1 helps individuals and vehicle dealers in Kenya list, discover, and locate vehicles for sale in real-time on a live map — with voice-guided directions.</p>
+
+  </section>
+
+  <section>
+    <h2>🌍 Key Services Offered</h2>
+    <ul>
+     <li><strong>Vehicle Listings:</strong> Share your car, motorcycle, or truck with details like make, type, cost, and contact.</li>
+
+      <li><strong>Live Map Display:</strong> Properties are instantly shown on an interactive map for nearby buyers.</li>
+      <li><strong>Filters:</strong> Customers can filter by property type, county, location, and cost range.</li>
+      <li><strong>Real-Time Directions:</strong> Users receive walking directions with automatic updates and map routing.</li>
+     
+      <li><strong>Editable Listings:</strong> Owners can edit or delete their listings easily via the map interface.</li>
+    </ul>
+  </section>
+
+<section>
+  <h2>🔍 Target Users</h2>
+  <ul>
+    <li><strong>Vehicle Owners:</strong> List your car, motorbike, tuk-tuk, or lorry and let buyers easily find and contact you.</li>
+    <li><strong>Agents/Dealers:</strong> Share listings on behalf of clients and indicate your agency at the bottom of the description.</li>
+    <li><strong>Buyers:</strong> Find vehicles near you, compare prices, and get live walking directions to the seller's location.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>🗺️ How It Works</h2>
+  <ol>
+    <li>Vehicle owners or agents fill in the form and allow location access while at the vehicle site.</li>
+    <li>Buyers browse listings live on the map and apply filters like price, type, or distance.</li>
+    <li>Select a vehicle to get voice-guided walking directions to the exact location.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>🎯 Benefits</h2>
+  <ul>
+    <li>Live and real-time vehicle listings</li>
+    <li>Verified locations based on GPS</li>
+    <li>Easy filters for price, distance, and vehicle type</li>
+    <li>Clear chat option with the seller or agent</li>
+  </ul>
+</section>
+
+<section>
+  <h2>🌟 What Our Users Say</h2>
+  <div class="testimonial-grid">
+    <div class="testimonial-card">
+      <p>"I sold my tuk-tuk within days thanks to AutoConnect. The live map made it easy for buyers!"</p>
+      <h4>— Musa Kiplangat, Eldoret</h4>
+    </div>
+    <div class="testimonial-card">
+      <p>"I listed several cars for my dealership, and buyers contacted me directly through chat."</p>
+      <h4>— AutoLink Dealers, Nairobi</h4>
+    </div>
+    <div class="testimonial-card">
+      <p>"I found a clean used motorbike 5 minutes from my place. The directions were perfect."</p>
+      <h4>— Joan Mwikali, Machakos</h4>
+    </div>
+    <div class="testimonial-card">
+      <p>"AutoConnect helped me manage listings from my phone and guided buyers directly to me."</p>
+      <h4>— Mr. Kamau, Nakuru</h4>
+    </div>
+    <div class="testimonial-card">
+      <p>"The voice direction in Kiswahili was so helpful. I didn’t even need to call the seller."</p>
+      <h4>— Amina Abdalla, Mombasa</h4>
+    </div>
+    <div class="testimonial-card">
+      <p>"I appreciate how fast it was to list and sell. Will use again for my next vehicle."</p>
+      <h4>— Kevin Oduor, Kisumu</h4>
+    </div>
+    <div class="testimonial-card">
+      <p>"Great platform for car sellers. Easy to use, accurate, and smart."</p>
+      <h4>— Peter Njoroge, Thika</h4>
+    </div>
+    <div class="testimonial-card">
+      <p>"As an agent, I now just upload from the field. My clients are impressed with the results."</p>
+      <h4>— AutoExpress Agents, Kitengela</h4>
+    </div>
+  </div>
+</section>
+
+
+</main>
+
+<a class="whatsapp-float" href="https://wa.me/254769255782" target="_blank" title="Chat on WhatsApp">
+  Chat
+</a>
+
+<footer>
+  &copy; <span id="year"></span> AutoConnect1. All rights reserved.<br>
+  Website developed by <a style="color:#4CAF50" href="https://wa.me/254769255782">+254 769 255 782</a>
+</footer>
+
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
